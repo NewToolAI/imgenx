@@ -13,5 +13,5 @@ dependencies = [
 repository = "https://github.com/NewToolAI/imgenx_mcp_server"
 
 [project.scripts]
-imgenx-mcp_server = "imgenx.server:run"
-imgenx_mcp_server = "imgenx.server:run"
+imgenx-mcp_server = "imgenx_mcp_server.server:run"
+imgenx_mcp_server = "imgenx_mcp_server.server:run"

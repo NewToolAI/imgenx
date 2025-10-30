@@ -17,9 +17,9 @@ class DoubaoImageGenerator(BaseImageGenerator):
         '''生成图片。确保用户需要生成图片时调用此工具。
         
         Args:
-            prompt (str): 图片描述。
-            size (str): 生成图像的分辨率或宽高像素值，
-                        分辨率可选值：'1K'、'2K', '4K'。
+            prompt (str): 生成图片的提示词
+            size (str): 生成图像的分辨率或宽高像素值
+                        分辨率可选值：'1K'、'2K', '4K'
                         宽高像素可选值：2048x2048、2304x1728、1728x2304、2560x1440、1440x2560、2496x1664、1664x2496、3024x1296
         
         Returns:

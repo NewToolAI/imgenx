@@ -1,6 +1,15 @@
-# ImgenX MCP Server
-
-一个基于 Model Context Protocol (MCP) 的图片生成服务器，支持通过文本描述生成图片并下载到本地。
+<div align="center">
+  <img src="assets/logo.jpeg" alt="ImgenX MCP Server Logo" width="200" height="200">
+  
+  # ImgenX MCP Server
+  
+  [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/downloads/)
+  [![MCP](https://img.shields.io/badge/MCP-Compatible-green.svg)](https://modelcontextprotocol.io/)
+  [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+  [![GitHub Stars](https://img.shields.io/github/stars/NewToolAI/imgenx_mcp_server?style=social)](https://github.com/NewToolAI/imgenx_mcp_server)
+  
+  **一个基于 Model Context Protocol (MCP) 的图片生成服务器，支持通过文本描述生成图片并下载到本地。**
+</div>
 
 ## 功能特性
 

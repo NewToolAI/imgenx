@@ -21,12 +21,6 @@ headers = get_http_headers(include_all=True)
 model = headers.get('model', os.getenv('model'))
 api_key = headers.get('api_key', os.getenv('api_key'))
 
-if model is None:
-    raise ToolError('Model header is required.')
-
-if api_key is None:
-    raise ToolError('API key header is required.')
-
 generator = factory.create_image_generator(model, api_key)
 
 
