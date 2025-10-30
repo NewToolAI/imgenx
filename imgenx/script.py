@@ -38,7 +38,7 @@ def run(prompt: str, size: str, output: str):
     if output.is_dir():
         path_list = [f'{output}/{datetime.now().strftime("%Y-%m-%d_%H:%M:%S")}_{i + 1}.png' for i in range(len(url_list))]
     else:
-        path_list = [f'{output.parent}/{output.stem}_{i + 1}.{output.suffix}' for i in range(len(url_list))]
+        path_list = [f'{output.parent}/{output.stem}_{i + 1}.{output.suffix if output.suffix else "jpg"}' for i in range(len(url_list))]
     
     for url_item, path in zip(url_list, path_list):
         response = requests.get(url_item['url'])

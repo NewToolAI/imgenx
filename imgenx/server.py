@@ -34,14 +34,15 @@ def text_to_image(prompt: str, size: str) -> List[Dict[str, str]]:
         List[Dict[str: str]]: 图片url列表。
     '''
     headers = get_http_headers(include_all=True)
-    model = headers.get('IMGENX_MODEL', os.getenv('IMGENX_MODEL'))
-    api_key = headers.get('IMGENX_API_KEY', os.getenv('IMGENX_API_KEY'))
+    print(headers)
+    model = headers.get('imgenx_model', os.getenv('IMGENX_MODEL'))
+    api_key = headers.get('imgenx_api_key', os.getenv('IMGENX_API_KEY'))
 
     if model is None:
-        raise ValueError('IMGENX_MODEL is None')
+        raise ToolError('IMGENX_MODEL is None')
 
     if api_key is None:
-        raise ValueError('IMGENX_API_KEY is None')
+        raise ToolError('IMGENX_API_KEY is None')
 
     try:
         generator = factory.create_image_generator(model, api_key)
