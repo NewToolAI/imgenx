@@ -23,6 +23,7 @@ mcp = FastMCP(
 @mcp.tool
 def text_to_image(prompt: str, size: str) -> List[Dict[str, str]]:
     '''根据用户要求生成图片。确保用户需要生成图片时调用此工具。
+    确保用Markdown格式输出图片url，例如：[title](url)
         
     Args:
         prompt (str): 生成图片的提示词
@@ -52,7 +53,7 @@ def text_to_image(prompt: str, size: str) -> List[Dict[str, str]]:
     return url_list
 
 
-@mcp.tool(description='')
+@mcp.tool
 def download_image(url: str, path: str) -> str:
     '''读取生成的图片url并保存到本地
     
@@ -64,7 +65,6 @@ def download_image(url: str, path: str) -> str:
         str: 成功时返回 'success'
     '''
     path = Path(path)
-
     if path.exists():
         raise ToolError(f'Path {path} already exists.')
 
