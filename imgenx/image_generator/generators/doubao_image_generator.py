@@ -1,4 +1,5 @@
 import base64
+from pathlib import Path
 from typing import List, Dict
 from volcenginesdkarkruntime import Ark
 
@@ -66,6 +67,10 @@ class DoubaoImageGenerator(BaseImageGenerator):
         return result
 
     def _image_to_base64(self, image_path: str) -> str:
+        image_path = Path(image_path)
+
         with open(image_path, 'rb') as image_file:
             base64_image = base64.b64encode(image_file.read()).decode('utf-8')
+            base64_image = f'data:image/{image_path.suffix.strip(".")};base64,{base64_image}'
+
         return base64_image
