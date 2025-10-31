@@ -5,7 +5,7 @@
   [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/downloads/)
   [![MCP](https://img.shields.io/badge/MCP-Compatible-green.svg)](https://modelcontextprotocol.io/)
   [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](#许可证)
-  [![GitHub Stars](https://img.shields.io/github/stars/NewToolAI/imgenx_mcp_server?style=social)](https://github.com/NewToolAI/imgenx)
+  [![GitHub Stars](https://img.shields.io/github/stars/NewToolAI/imgenx?style=social)](https://github.com/NewToolAI/imgenx)
 
 **ImgenX: 一个用AI生成图片的命令行工具和MCP Server**
 </div>
