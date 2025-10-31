@@ -15,7 +15,13 @@ def text_to_image(model: str, api_key: str, prompt: str, size: str) -> List[Dict
     return url_list
 
 
-def run(prompt: str, size: str, output: str):
+def image_to_image(model: str, api_key: str, prompt: str, images: List[str], size: str) -> List[Dict[str, str]]:
+    generator = factory.create_image_generator(model, api_key)
+    url_list = generator.image_to_image(prompt, images, size)
+    return url_list
+
+
+def run(prompt: str, size: str, output: str, images: List[str] = None):
     print('Generate images...')
 
     load_dotenv()
@@ -33,7 +39,10 @@ def run(prompt: str, size: str, output: str):
     if output.exists() and output.is_file():
         raise ValueError(f'Output path {output} already exists.')
 
-    url_list = text_to_image(model, api_key, prompt, size)
+    if images is not None and len(images) > 0:
+        url_list = image_to_image(model, api_key, prompt, images, size)
+    else:
+        url_list = text_to_image(model, api_key, prompt, size)
 
     if output.is_dir():
         path_list = [f'{output}/{datetime.now().strftime("%Y-%m-%d_%H:%M:%S")}_{i + 1}.png' for i in range(len(url_list))]

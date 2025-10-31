@@ -1,9 +1,7 @@
 <div align="center">
-  <img src="logo.jpeg" alt="ImgenX MCP Server Logo" width="250" height="250">
+  <img src="logo.png" alt="ImgenX MCP Server Logo" width="800" height="400">
   
-  # ImgenX
-  
-  [![Version](https://img.shields.io/badge/Version-0.0.3-brightgreen.svg)](https://github.com/NewToolAI/imgenx_mcp_server/releases)
+  [![Version](https://img.shields.io/badge/Version-0.0.5-brightgreen.svg)](https://github.com/NewToolAI/imgenx_mcp_server/releases)
   [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/downloads/)
   [![MCP](https://img.shields.io/badge/MCP-Compatible-green.svg)](https://modelcontextprotocol.io/)
   [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](#许可证)
@@ -57,7 +55,8 @@ pip install -e .
 ```
 imgenx gen 一只在云上飞翔的猫
 imgenx gen --size 2K 一只在云上飞翔的猫
-imgenx gen --size 2048x2048 --output test.jpg 一只在云上飞翔的猫
+imgenx gen 一只在云上飞翔的猫 --size 2048x2048 --output test.jpg
+imgenx gen 一只在云上飞翔的猫 --images test.jpg --size 2048x2048 --output test2.jpg
 ```
 
 ### 作为 MCP 服务器运行
