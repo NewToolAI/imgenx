@@ -88,7 +88,7 @@ export IMGENX_API_KEY="your_api_key"
 ### 直接使用命令行生成图片
 
 ```bash
-export IMGENX_MODEL="doubao:your_model_name"
+export IMGENX_MODEL="doubao:doubao-seedream-4-0-250828"
 export IMGENX_API_KEY="your_api_key"
 imgenx gen --prompt "一只在云上飞翔的猫" --size 2K --output ./images
 ```

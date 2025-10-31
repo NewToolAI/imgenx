@@ -1,0 +1,47 @@
+name: Publish Python Package  # 触发：GitHub Release（推荐）
+
+on:
+  release:
+    types: [published]  # 或者使用 tag 推送触发：见下方注释
+  workflow_dispatch: {}  # 手动触发
+  # 如需使用 tag 推送触发，请取消下方注释：
+  # push:
+  #   tags:
+  #     - 'v*'
+
+jobs:
+  deploy:
+    name: Build & Publish to PyPI
+    runs-on: ubuntu-latest
+    environment: pypi  # 与 PyPI Trusted Publishing 环境名称一致
+    permissions:
+      id-token: write  # 关键：OIDC 权限（受信发布）
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'  # 项目要求：>=3.10
+          cache: 'pip'
+
+      - name: Install build tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
+
+      - name: Build package  # 生成 dist/*.whl 和 .tar.gz
+        run: python -m build
+
+      - name: Publish to PyPI  # 使用 OIDC，无需 API token
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: false  # 发布新版本时应保持为 false
+
+    # 可选：限制并发，避免重复发布
+    concurrency:
+      group: pypi-publish-${{ github.ref }}
+      cancel-in-progress: false
