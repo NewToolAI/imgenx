@@ -110,3 +110,13 @@ def download_image(url: str, path: str) -> str:
     path.write_bytes(response.content)
 
     return 'success'
+
+
+@mcp.custom_route('/health', methods=['GET'])
+def health() -> str:
+    return 'success'
+
+
+@mcp.custom_route('/healthy', methods=['GET'])
+def healthy() -> str:
+    return 'success'
