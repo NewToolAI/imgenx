@@ -3,7 +3,7 @@
   
   # ImgenX
   
-  [![Version](https://img.shields.io/badge/Version-0.0.2-brightgreen.svg)](https://github.com/NewToolAI/imgenx_mcp_server/releases)
+  [![Version](https://img.shields.io/badge/Version-0.0.3-brightgreen.svg)](https://github.com/NewToolAI/imgenx_mcp_server/releases)
   [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/downloads/)
   [![MCP](https://img.shields.io/badge/MCP-Compatible-green.svg)](https://modelcontextprotocol.io/)
   [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](#许可证)
