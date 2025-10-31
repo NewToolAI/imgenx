@@ -45,8 +45,8 @@ pip install imgenx
 
 #### 方式二：从源码安装
 ```bash
-git clone https://github.com/NewToolAI/imgenx_mcp_server.git
-cd imgenx-mcp-server
+git clone https://github.com/NewToolAI/imgenx.git
+cd imgenx
 pip install -e .
 ```
 
@@ -66,7 +66,7 @@ imgenx gen --size 2048x2048 --output test.jpg 一只在云上飞翔的猫
 ```json
 {
   "mcpServers": {
-    "imgenx-cli": {
+    "imgenx-mcp": {
       "command": "uvx",
       "args": [
         "imgenx",
