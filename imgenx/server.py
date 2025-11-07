@@ -25,6 +25,7 @@ mcp = FastMCP(
 def text_to_image(prompt: str, size: str = '2K') -> List[Dict[str, str]]:
     '''根据输入的提示词生成图片，确保用户需要生成图片时调用此工具。
     确保用Markdown格式输出图片url，例如：[title](url)
+    生成图片后用download工具下载到本地
         
     Args:
         prompt (str): 生成图片的提示词
@@ -58,6 +59,7 @@ def text_to_image(prompt: str, size: str = '2K') -> List[Dict[str, str]]:
 def image_to_image(prompt: str, images: List[str], size: str = '2K') -> List[Dict[str, str]]:
     '''根据输入的提示词和图片生成新图片，确保用户需要生成图片时调用此工具。
     确保用Markdown格式输出图片url，例如：[title](url)
+    生成图片后用download工具下载到本地
         
     Args:
         prompt (str): 生成图片的提示词
@@ -92,6 +94,7 @@ def image_to_image(prompt: str, images: List[str], size: str = '2K') -> List[Dic
 def text_to_video(prompt: str, resolution: str = '720p', ratio: str = '16:9', duration: int = 5) -> str:
     '''根据输入的提示词生成视频，确保用户需要生成视频时调用此工具。
     确保用Markdown格式输出视频url，例如：[title](url)
+    生成视频后用download工具下载到本地
         
     Args:
         prompt (str): 生成图片的提示词
@@ -126,6 +129,7 @@ def image_to_video(prompt: str, first_frame: str, last_frame: str|None = None,
                   resolution: str = '720p', ratio: str = '16:9', duration: int = 5) -> str:
     '''根据输入的提示词和视频首尾帧图片生成视频，确保用户需要生成视频时调用此工具。
     确保用Markdown格式输出视频url，例如：[title](url)
+    生成视频后用download工具下载到本地
         
     Args:
         prompt (str): 生成图片的提示词
@@ -159,9 +163,12 @@ def image_to_video(prompt: str, first_frame: str, last_frame: str|None = None,
 
 @mcp.tool
 def analyze_image(prompt: str, image: str) -> str:
-    '''分析图片，确保用户需要分析图片时调用此工具。
+    '''分析图片获取精确的信息，确保用户需要分析，编辑、裁剪图片时先调用此工具。
+    确保尽量用精确数字描述图片信息。
+    输出图片裁剪区域时，确保给出精确**小数比例坐标**，坐标为左上角和右下角：x1(left), y1(upper), x2(right), y2(lower)
 
     Args:
+        prompt (str): 分析图片的提示词
         image (str): 图片路径或URL
 
     Returns:
@@ -179,7 +186,7 @@ def analyze_image(prompt: str, image: str) -> str:
 
     try:
         analyzer = factory.create_image_analyzer(model, api_key)
-        result = analyzer.analyze_image(prompt, image)
+        result = analyzer.analyze(prompt, image)
     except Exception as e:
         raise ToolError(f'Error: {e}')
 
@@ -207,13 +214,13 @@ def download(url: str, path: str) -> str:
 
 @mcp.tool
 def get_image_info(image: str) -> Dict[str, str]:
-    '''获取图片信息，确保用户需要获取图片信息时调用此工具。
+    '''获取图片分辨率和类型信息，确保用户需要获取图片分辨率和类型信息时调用此工具。
 
     Args:
         image (str): 图片路径或URL
 
     Returns:
-        Dict[str,str]: 图片信息
+        Dict[str,str]: 分辨率和类型信息
     '''
     try:
         info = operator.get_image_info(image)
@@ -228,7 +235,7 @@ def crop_image(image: str, box: str, output: str) -> Dict[str, str]:
     '''框裁剪图片，确保用户需要裁剪图片时调用此工具。
     Args:
         image (str): 图片路径或URL
-        box (str): "x,y,width,height"
+        box (str): 小数比例坐标，x1(left), y1(upper), x2(right), y2(lower)
         output (str): 输出文件路径（后缀决定格式）
 
     Returns:

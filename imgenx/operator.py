@@ -37,20 +37,25 @@ def get_image_info(image: str) -> str:
 
 def crop_image(image: str, box: str, output: str):
     try:
-        x, y, w, h = map(int, box.split(','))
+        x1, y1, x2, y2 = map(float, box.split(','))
     except Exception:
-        raise ValueError('box must be "x,y,width,height" integers')
+        raise ValueError('box must be "x1, y1, x2, y2" integers')
 
     img = _load_image(image)
 
-    x = max(0, x)
-    y = max(0, y)
-    w = max(1, w)
-    h = max(1, h)
-    right = min(img.width, x + w)
-    bottom = min(img.height, y + h)
-    cropped = img.crop((x, y, right, bottom))
+    width = img.width
+    height = img.height
 
+    x1 = width * x1
+    y1 = height * y1
+    x2 = width * x2
+    y2 = height * y2
+    x1 = int(max(0, x1))
+    y1 = int(max(0, y1))
+    x2 = int(max(0, x2))
+    y2 = int(max(0, y2))
+
+    cropped = img.crop((x1, y1, x2, y2))
     _save_image(cropped, output)
 
 
