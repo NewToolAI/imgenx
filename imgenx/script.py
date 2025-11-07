@@ -21,15 +21,29 @@ def image_to_image(model: str, api_key: str, prompt: str, images: List[str], siz
     return url_list
 
 
-def run(prompt: str, size: str, output: str, images: List[str] = None):
+def text_to_video(model: str, api_key: str, prompt: str,
+                  resolution: str = '720p', ratio: str = '16:9', duration: int = 5) -> str:
+    generator = factory.create_video_generator(model, api_key)
+    url = generator.text_to_video(prompt, resolution, ratio, duration)
+    return url
+
+
+def image_to_video(model: str, api_key: str, prompt: str, first_frame: str, last_frame: str|None = None,
+                  resolution: str = '720p', ratio: str = '16:9', duration: int = 5) -> str:
+    generator = factory.create_video_generator(model, api_key)
+    url = generator.image_to_video(prompt, first_frame, last_frame, resolution, ratio, duration)
+    return url
+
+
+def gen_image(prompt: str, size: str, output: str, images: List[str] = None):
     print('Generate images...')
 
     load_dotenv()
-    model = os.getenv('IMGENX_MODEL')
+    model = os.getenv('IMGENX_IMAGE_MODEL')
     api_key = os.getenv('IMGENX_API_KEY')
 
     if model is None:
-        raise ValueError('Envrioment variable IMGENX_MODEL is empty.')
+        raise ValueError('Envrioment variable IMGENX_IMAGE_MODEL is empty.')
 
     if api_key is None:
         raise ValueError('Envrioment variable IMGENX_API_KEY is empty.')
@@ -55,3 +69,32 @@ def run(prompt: str, size: str, output: str, images: List[str] = None):
         response = requests.get(url_item['url'])
         Path(path).write_bytes(response.content)
         print(f'Save image to {path}')
+
+
+def gen_video(prompt: str, first_frame: str = None, last_frame: str|None = None,
+              resolution: str = '720p', ratio: str = '16:9', duration: int = 5, output: str = None):
+    print('Generate video...')
+
+    load_dotenv()
+    model = os.getenv('IMGENX_VIDEO_MODEL')
+    api_key = os.getenv('IMGENX_API_KEY')
+
+    if model is None:
+        raise ValueError('Envrioment variable IMGENX_VIDEO_MODEL is empty.')
+
+    if api_key is None:
+        raise ValueError('Envrioment variable IMGENX_API_KEY is empty.')
+
+    if output is None:
+        output = f'{datetime.now().strftime("%Y-%m-%d_%H:%M:%S")}.mp4'
+    else:
+        output = Path(output)
+
+    if output.exists() and output.is_file():
+        raise ValueError(f'Output path {output} already exists.')
+
+    url = image_to_video(model, api_key, prompt, first_frame, last_frame, resolution, ratio, duration)
+
+    response = requests.get(url)
+    Path(output).write_bytes(response.content)
+    print(f'Save video to {output}')

@@ -17,12 +17,12 @@ load_dotenv()
 
 mcp = FastMCP(
     name='imgenx-mcp-server',
-    instructions='图片生成工具，按照用户需求生成图片',
+    instructions='图片视频生成工具，按照用户需求生成图片或视频',
 )
 
 
 @mcp.tool
-def text_to_image(prompt: str, size: str) -> List[Dict[str, str]]:
+def text_to_image(prompt: str, size: str = '2K') -> List[Dict[str, str]]:
     '''根据输入的提示词生成图片，确保用户需要生成图片时调用此工具。
     确保用Markdown格式输出图片url，例如：[title](url)
         
@@ -36,11 +36,11 @@ def text_to_image(prompt: str, size: str) -> List[Dict[str, str]]:
         List[Dict[str: str]]: 图片url列表。
     '''
     headers = get_http_headers(include_all=True)
-    model = headers.get('imgenx_model', os.getenv('IMGENX_MODEL'))
+    model = headers.get('imgenx_image_model', os.getenv('IMGENX_IMAGE_MODEL'))
     api_key = headers.get('imgenx_api_key', os.getenv('IMGENX_API_KEY'))
 
     if model is None:
-        raise ToolError('IMGENX_MODEL is None')
+        raise ToolError('IMGENX_IMAGE_MODEL is None')
 
     if api_key is None:
         raise ToolError('IMGENX_API_KEY is None')
@@ -55,7 +55,7 @@ def text_to_image(prompt: str, size: str) -> List[Dict[str, str]]:
 
 
 @mcp.tool
-def image_to_image(prompt: str, images: List[str], size: str) -> List[Dict[str, str]]:
+def image_to_image(prompt: str, images: List[str], size: str = '2K') -> List[Dict[str, str]]:
     '''根据输入的提示词和图片生成新图片，确保用户需要生成图片时调用此工具。
     确保用Markdown格式输出图片url，例如：[title](url)
         
@@ -70,11 +70,11 @@ def image_to_image(prompt: str, images: List[str], size: str) -> List[Dict[str, 
         List[Dict[str: str]]: 图片url列表。
     '''
     headers = get_http_headers(include_all=True)
-    model = headers.get('imgenx_model', os.getenv('IMGENX_MODEL'))
+    model = headers.get('imgenx_image_model', os.getenv('IMGENX_IMAGE_MODEL'))
     api_key = headers.get('imgenx_api_key', os.getenv('IMGENX_API_KEY'))
 
     if model is None:
-        raise ToolError('IMGENX_MODEL is None')
+        raise ToolError('IMGENX_IMAGE_MODEL is None')
 
     if api_key is None:
         raise ToolError('IMGENX_API_KEY is None')
@@ -89,18 +89,116 @@ def image_to_image(prompt: str, images: List[str], size: str) -> List[Dict[str, 
 
 
 @mcp.tool
-def download_image(url: str, path: str) -> str:
-    '''读取生成的图片url并保存到本地
+def text_to_video(prompt: str, resolution: str = '720p', ratio: str = '16:9', duration: int = 5) -> str:
+    '''根据输入的提示词生成视频，确保用户需要生成视频时调用此工具。
+    确保用Markdown格式输出视频url，例如：[title](url)
+        
+    Args:
+        prompt (str): 生成图片的提示词
+        resolution (str): 生成视频的分辨率：480p、720、1080p
+        ratio (str): 生成视频的比例：16:9、4:3、1:1、3:4、9:16、21:9
+        duration (int): 生成视频的时长，单位秒，支持 2~12 秒
+        
+    Returns:
+        视频下载的url
+    '''
+    headers = get_http_headers(include_all=True)
+    model = headers.get('imgenx_video_model', os.getenv('IMGENX_VIDEO_MODEL'))
+    api_key = headers.get('imgenx_api_key', os.getenv('IMGENX_API_KEY'))
+
+    if model is None:
+        raise ToolError('IMGENX_VIDEO_MODEL is None')
+
+    if api_key is None:
+        raise ToolError('IMGENX_API_KEY is None')
+
+    try:
+        generator = factory.create_video_generator(model, api_key)
+        url = generator.text_to_video(prompt, resolution, ratio, duration)
+    except Exception as e:
+        raise ToolError(f'Error: {e}')
+
+    return url
+
+
+@mcp.tool
+def image_to_video(prompt: str, first_frame: str, last_frame: str|None = None, 
+                  resolution: str = '720p', ratio: str = '16:9', duration: int = 5) -> str:
+    '''根据输入的提示词和视频首尾帧图片生成视频，确保用户需要生成视频时调用此工具。
+    确保用Markdown格式输出视频url，例如：[title](url)
+        
+    Args:
+        prompt (str): 生成图片的提示词
+        first_frame (str): 视频的首帧图片url或文件路径
+        last_frame (str|None): 视频的尾图片url或文件路径，默认None
+        resolution (str): 生成视频的分辨率：480p、720、1080p
+        ratio (str): 生成视频的比例：16:9、4:3、1:1、3:4、9:16、21:9
+        duration (int): 生成视频的时长，单位秒，支持 2~12 秒
+        
+    Returns:
+        视频下载的url
+    '''
+    headers = get_http_headers(include_all=True)
+    model = headers.get('imgenx_video_model', os.getenv('IMGENX_VIDEO_MODEL'))
+    api_key = headers.get('imgenx_api_key', os.getenv('IMGENX_API_KEY'))
+
+    if model is None:
+        raise ToolError('IMGENX_VIDEO_MODEL is None')
+
+    if api_key is None:
+        raise ToolError('IMGENX_API_KEY is None')
+
+    try:
+        generator = factory.create_video_generator(model, api_key)
+        url = generator.image_to_video(prompt, first_frame, last_frame, resolution, ratio, duration)
+    except Exception as e:
+        raise ToolError(f'Error: {e}')
+
+    return url
+
+
+@mcp.tool
+def analyze_image(prompt: str, image: str) -> str:
+    '''分析图片，确保用户需要分析图片时调用此工具。
+
+    Args:
+        image (str): 图片路径或URL
+
+    Returns:
+        str: 图片分析结果
+    '''
+    headers = get_http_headers(include_all=True)
+    model = headers.get('imgenx_analyzer_model', os.getenv('IMGENX_ANALYZER_MODEL'))
+    api_key = headers.get('imgenx_api_key', os.getenv('IMGENX_API_KEY'))
+
+    if model is None:
+        raise ToolError('IMGENX_ANALYZER_MODEL is None')
+
+    if api_key is None:
+        raise ToolError('IMGENX_API_KEY is None')
+
+    try:
+        analyzer = factory.create_image_analyzer(model, api_key)
+        result = analyzer.analyze_image(prompt, image)
+    except Exception as e:
+        raise ToolError(f'Error: {e}')
+
+    return result
+
+
+@mcp.tool
+def download(url: str, path: str) -> str:
+    '''读取生成的图片或视频 url 并保存到本地
     
     Args:
-        url (str): 图片url
+        url (str): 图片或视频 url
         path (str): 保存路径
     
     Returns:
         str: 成功时返回 'success'
     '''
     try:
-        operator.download_image(url, path)
+        operator.download(url, path)
     except Exception as e:
         raise ToolError(f'Error: {e}')
 

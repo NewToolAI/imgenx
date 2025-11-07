@@ -1,7 +1,7 @@
 <div align="center">
   <img src="logo.jpg" alt="ImgenX MCP Server Logo" width="800" height="400">
   
-  [![Version](https://img.shields.io/badge/Version-0.1.0-brightgreen.svg)](https://github.com/NewToolAI/imgenx/releases)
+  [![Version](https://img.shields.io/badge/Version-0.2.0-brightgreen.svg)](https://github.com/NewToolAI/imgenx/releases)
   [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/downloads/)
   [![MCP](https://img.shields.io/badge/MCP-Compatible-green.svg)](https://modelcontextprotocol.io/)
   [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](#许可证)
@@ -215,7 +215,7 @@ imgenx-mcp-server/
 │   ├── operator.py                # 图片处理操作模块
 │   ├── main.py                    # CLI 入口（imgenx）
 │   ├── script.py                  # 命令行生成图片脚本
-│   └── image_generator/
+│   └── predictor/
 │       ├── base/
 │       │   └── base_image_generator.py  # 基础生成器接口
 │       └── generators/
@@ -234,7 +234,7 @@ imgenx-mcp-server/
 2. 实现 `BaseImageGenerator` 接口：
 ```python
 from typing import List, Dict
-from imgenx.image_generator.base.base_image_generator import BaseImageGenerator
+from imgenx.predictor.base.base_image_generator import BaseImageGenerator
 
 class ProviderImageGenerator(BaseImageGenerator):
     def __init__(self, model: str, api_key: str):

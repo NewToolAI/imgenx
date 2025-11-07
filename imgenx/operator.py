@@ -6,7 +6,7 @@ import requests
 from PIL import Image, ImageEnhance
 
 
-def download_image(url: str, output: str):
+def download(url: str, output: str):
     output = Path(output)
     if output.exists():
         raise FileExistsError(f'Path {output} already exists.')

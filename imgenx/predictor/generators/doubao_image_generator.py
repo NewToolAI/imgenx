@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import List, Dict
 from volcenginesdkarkruntime import Ark
 
-from imgenx.image_generator.base.base_image_generator import BaseImageGenerator
+from imgenx.predictor.base.base_image_generator import BaseImageGenerator
 
 
 class DoubaoImageGenerator(BaseImageGenerator):
