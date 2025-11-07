@@ -1,4 +1,4 @@
-<div align="center">
+demo<div align="center">
   <img src="logo.jpg" alt="ImgenX MCP Server Logo" width="800" height="400">
   
   [![Version](https://img.shields.io/badge/Version-0.2.0-brightgreen.svg)](https://github.com/NewToolAI/imgenx/releases)
@@ -9,7 +9,7 @@
 **ImgenX: AI图片生成与图片处理的命令行工具和MCP Server**
 </div>
 
-https://github.com/user-attachments/assets/ea43af66-ff56-4396-9754-1d48e23cf18a
+https://github.com/user-attachments/assets/92749d6f-727e-4874-a008-6ded8b4d9e7b
 
 ## 功能特性
 
