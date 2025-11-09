@@ -1,7 +1,7 @@
 <div align="center">
   <img src="logo.jpg" alt="ImgenX MCP Server Logo" width="800" height="400">
   
-  [![Version](https://img.shields.io/badge/Version-0.2.2-brightgreen.svg)](https://github.com/NewToolAI/imgenx/releases)
+  [![Version](https://img.shields.io/badge/Version-0.2.3-brightgreen.svg)](https://github.com/NewToolAI/imgenx/releases)
   [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/downloads/)
   [![MCP](https://img.shields.io/badge/MCP-Compatible-green.svg)](https://modelcontextprotocol.io/)
   [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](#许可证)
@@ -23,6 +23,7 @@ https://github.com/user-attachments/assets/92749d6f-727e-4874-a008-6ded8b4d9e7b
   - **尺寸调整**: 调整图片大小，支持保持宽高比
   - **格式转换**: 支持PNG、JPEG、JPG、WEBP格式转换
   - **图像调整**: 调整亮度、对比度、饱和度
+  - **图片粘贴**: 将图片粘贴到背景图片的指定位置
 - **图片理解与分析**: 基于视觉模型分析图片内容，输出结构化或文本结果
 - **多种分辨率支持**: 支持 1K、2K、4K 分辨率以及多种自定义像素尺寸
 - **插件化架构**: 基于工厂模式设计，支持扩展新的图片生成服务提供商
@@ -103,6 +104,7 @@ imgenx video "一个人在运动" --first_frame logo.jpg --resolution 720p --rat
 #### HTTP 服务器模式
 ```bash
 imgenx server --transport streamable-http --host 0.0.0.0 --port 8000
+imgenx server --transport streamable-http --no_tools text_to_video image_to_video  # 禁用视频生成工具
 ```
 
 ```json
@@ -127,117 +129,38 @@ imgenx server --transport streamable-http --host 0.0.0.0 --port 8000
 #### 1. text_to_image
 根据文本描述生成图片。
 
-**参数:**
-- `prompt` (str): 图片生成的提示词
-- `size` (str): 图片尺寸，支持：
-  - 分辨率: `1K`, `2K`, `4K`
-  - 像素尺寸: `2048x2048`, `2304x1728`, `1728x2304`, `2560x1440`, `1440x2560`, `2496x1664`, `1664x2496`, `3024x1296`
-
-**返回:** 包含图片 URL 的字典列表
-
 #### 2. image_to_image
 基于输入图片和文本描述生成新图片。
-
-**参数:**
-- `prompt` (str): 图片生成的提示词
-- `images` (List[str]): 输入图片URL列表或本地文件路径列表
-- `size` (str): 图片尺寸（同上）
-
-**返回:** 包含图片 URL 的字典列表
 
 #### 3. download
 下载图片或视频到本地。
 
-**参数:**
-- `url` (str): 图片或视频 URL
-- `path` (str): 本地保存路径
-
-**返回:** 成功时返回 'success'
-
 #### 4. get_image_info
 获取图片信息。
-
-**参数:**
-- `image` (str): 图片路径或URL
-
-**返回:** 包含图片信息的字典（格式、尺寸、模式、文件大小）
 
 #### 5. crop_image
 裁剪图片。
 
-**参数:**
-- `image` (str): 图片路径或URL
-- `box` (str): 小数比例坐标，裁剪区域为 "x1,y1,x2,y2"（取值 0~1，分别代表左上角与右下角在宽/高上的比例）
-- `output` (str): 输出文件路径
-
-**返回:** 包含生成图片路径的字典
-
 #### 9. text_to_video
 根据文本提示生成视频。
-
-**参数:**
-- `prompt` (str): 视频生成的提示词
-- `resolution` (str): 分辨率，支持 `480p`、`720p`、`1080p`
-- `ratio` (str): 宽高比，支持 `16:9`、`4:3`、`1:1`、`3:4`、`9:16`、`21:9`
-- `duration` (int): 时长（秒），支持 `2~12`
-
-**返回:** 视频下载的 URL（字符串）
 
 #### 10. image_to_video
 基于首帧与可选尾帧生成视频。
 
-**参数:**
-- `prompt` (str): 视频生成的提示词
-- `first_frame` (str): 首帧图片路径或 URL
-- `last_frame` (str|None): 尾帧图片路径或 URL（可选）
-- `resolution` (str): 分辨率，支持 `480p`、`720p`、`1080p`
-- `ratio` (str): 宽高比，支持 `16:9`、`4:3`、`1:1`、`3:4`、`9:16`、`21:9`
-- `duration` (int): 时长（秒），支持 `2~12`
-
-**返回:** 视频下载的 URL（字符串）
-
 #### 11. analyze_image
 分析图片内容，返回结构化或文本结果。
-
-**参数:**
-- `prompt` (str): 分析提示词（例如“请描述这张图片”或“给出裁剪建议”）
-- `image` (str): 图片路径或 URL
-
-**返回:** 分析结果字符串；输出裁剪建议时请使用小数比例坐标 `x1,y1,x2,y2`
 
 #### 6. resize_image
 调整图片尺寸。
 
-**参数:**
-- `image` (str): 图片路径或URL
-- `size` (str): 目标尺寸，格式为 "WIDTHxHEIGHT"
-- `output` (str): 输出文件路径
-- `keep_aspect` (bool): 是否保持宽高比，默认为 True
-
-**返回:** 包含生成图片路径的字典
-
 #### 7. convert_image
 转换图片格式。
-
-**参数:**
-- `image` (str): 图片路径或URL
-- `format` (str): 目标格式（PNG/JPEG/JPG/WEBP）
-- `output` (str): 输出文件路径
-- `quality` (int): 压缩质量（针对有损格式），默认为 90
-
-**返回:** 包含生成图片路径的字典
 
 #### 8. adjust_image
 调整图片的亮度、对比度和饱和度。
 
-**参数:**
-- `image` (str): 图片路径或URL
-- `output` (str): 输出文件路径
-- `brightness` (float): 亮度调整，默认为 1.0
-- `contrast` (float): 对比度调整，默认为 1.0
-- `saturation` (float): 饱和度调整，默认为 1.0
-
-**返回:** 包含生成图片路径的字典
+#### 12. paste_image
+将图片粘贴到背景图片的指定位置。
 
 ## 项目结构
 
@@ -306,7 +229,16 @@ class ProviderImageGenerator(BaseImageGenerator):
 
 ## 更新日志
 
-### v0.2.0 (当前版本)
+### v0.2.3 (当前版本)
+
+#### 新增功能
+- **图片粘贴**: 新增 `paste_image` 工具，支持将图片粘贴到背景图片的指定位置
+- **工具控制**: 新增 `--no_tools` 参数，支持在运行 MCP 服务器时禁用特定工具
+
+#### 功能优化
+- 完善图片处理工具集，增强图片编辑能力
+
+### v0.2.0
 
 #### 新增功能
 - **视频生成**: 支持 `text_to_video` 与 `image_to_video` 两种方式
