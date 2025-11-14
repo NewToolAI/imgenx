@@ -60,7 +60,7 @@ def analyze_query(plan: str, tool_chains: List[str]) -> Dict[str, str]:
 
 
 @mcp.tool
-def text_to_image(prompt: str, size: str = '2K') -> List[Dict[str, str]]:
+def text_to_image(prompt: str, size: str = '2K') -> List:
     '''根据输入的提示词生成图片，确保用户需要生成图片时调用此工具。
     确保用Markdown格式输出图片url，例如：[title](url)
     确保生成图片后用download工具下载到本地
@@ -70,7 +70,7 @@ def text_to_image(prompt: str, size: str = '2K') -> List[Dict[str, str]]:
         size (str): 生成图像的分辨率或宽高像素值
         
     Returns:
-        List[Dict[str: str]]: 图片url列表。
+        生成的图片url。
     '''
     headers = get_http_headers(include_all=True)
     model, api_key = utils.get_provider_model_api_key('text_to_image', headers)
@@ -91,7 +91,7 @@ def text_to_image(prompt: str, size: str = '2K') -> List[Dict[str, str]]:
 
 
 @mcp.tool
-def image_to_image(prompt: str, images: List[str], size: str = '2K') -> List[Dict[str, str]]:
+def image_to_image(prompt: str, images: List[str], size: str = '2K') -> List:
     '''根据输入的提示词和图片生成新图片，确保用户需要生成图片时调用此工具。
     确保用Markdown格式输出图片url，例如：[title](url)
     确保生成图片后用download工具下载到本地
@@ -102,7 +102,7 @@ def image_to_image(prompt: str, images: List[str], size: str = '2K') -> List[Dic
         size (str): 生成图像的分辨率或宽高像素值
         
     Returns:
-        List[Dict[str: str]]: 图片url列表。
+        生成的图片url。
     '''
     headers = get_http_headers(include_all=True)
     model, api_key = utils.get_provider_model_api_key('image_to_image', headers)

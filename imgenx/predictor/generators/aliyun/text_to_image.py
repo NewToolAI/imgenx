@@ -30,6 +30,6 @@ class AliyunTextToImage(BaseTextToImage):
         )
 
         result = []
-        for image_url in response.output.choices[0].message.content[0]['image']:
-            result.append(image_url)
+        for item in response.output.choices[0].message.content:
+            result.append(item['image'])
         return result
