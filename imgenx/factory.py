@@ -18,7 +18,7 @@ def create_video_generator(model: str, api_key: str) -> BaseVideoGenerator:
 
 
 @cache
-def create_image_analyzer(model: str, api_key: str) -> BaseImageInspector:
+def create_image_inspector(model: str, api_key: str) -> BaseImageInspector:
     return create_predictor(model, api_key, 'image_inspector')
 
 

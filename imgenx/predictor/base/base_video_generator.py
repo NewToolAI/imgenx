@@ -9,10 +9,10 @@ class BaseVideoGenerator(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def text_to_video(self, prompt: str, resolution: str, ratio: str, duration: int) -> Dict[str, str]:
+    def text_to_video(self, prompt: str, resolution: str, ratio: str, duration: int):
         raise NotImplementedError
 
     @abstractmethod
     def image_to_video(self, prompt: str, first_frame: str, last_frame: str|None, 
-                       resolution: str, ratio: str, duration: int) -> Dict[str, str]:
+                       resolution: str, ratio: str, duration: int):
         raise NotImplementedError

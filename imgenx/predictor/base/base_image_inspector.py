@@ -9,5 +9,5 @@ class BaseImageInspector(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def inspect(self, prompt: str, image: str) -> List[Dict[str, str]]:
+    def inspect(self, prompt: str, image: str):
         raise NotImplementedError

@@ -9,9 +9,9 @@ class BaseImageGenerator(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def text_to_image(self, prompt: str, size: str) -> List[Dict[str, str]]:
+    def text_to_image(self, prompt: str, size: str):
         raise NotImplementedError
 
     @abstractmethod
-    def image_to_image(self, prompt: str, images: List[str], size: str) -> List[Dict[str, str]]:
+    def image_to_image(self, prompt: str, images: List[str], size: str):
         raise NotImplementedError

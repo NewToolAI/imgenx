@@ -17,6 +17,17 @@ class DoubaoVideoGenerator(BaseVideoGenerator):
         )
 
     def text_to_video(self, prompt: str, resolution: str = '720p', ratio: str = '16:9', duration: int = 5) -> str:
+        '''根据提示词生成视频。
+
+        Args:
+            prompt (str): 生成视频的提示词
+            resolution (str): 生成视频的分辨率：480p、720、1080p
+            ratio (str): 生成视频的比例：16:9、4:3、1:1、3:4、9:16、21:9
+            duration (int): 生成视频的时长，单位秒，支持 2~12 秒
+        
+        Returns:
+            视频下载的url
+        '''
         create_result = self.client.content_generation.tasks.create(
             model=self.model,
             content=[
@@ -45,6 +56,19 @@ class DoubaoVideoGenerator(BaseVideoGenerator):
 
     def image_to_video(self, prompt: str, first_frame: str, last_frame: str|None = None, 
                        resolution: str = '720p', ratio: str = '16:9', duration: int = 5) -> str:
+        '''根据提示词和首尾帧图片生成视频。
+
+        Args:
+            prompt (str): 生成视频的提示词
+            first_frame (str): 视频的首帧图片url或文件路径
+            last_frame (str|None): 视频的尾图片url或文件路径，默认None
+            resolution (str): 生成视频的分辨率：480p、720、1080p
+            ratio (str): 生成视频的比例：16:9、4:3、1:1、3:4、9:16、21:9
+            duration (int): 生成视频的时长，单位秒，支持 2~12 秒
+        
+        Returns:
+            视频下载的url
+        '''
         if not first_frame.startswith('http'):
             first_frame = self._image_to_base64(first_frame)
 

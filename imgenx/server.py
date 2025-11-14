@@ -22,16 +22,55 @@ mcp = FastMCP(
 
 
 @mcp.tool
+def analyze_query(plan: str, tool_chains: List[str]) -> Dict[str, str]:
+    '''分析用户需求，制定计划。确保用户输入query时首先调用此工具。
+
+    Args:
+        plan (str): 工具调用的思考和计划
+        tool_chains (List[str]): 工具链列表: text_to_image | image_to_image | image_inspect | text_to_video | image_to_video ...
+        
+    Returns:
+        工具参数更详细的说明
+    '''
+    headers = get_http_headers(include_all=True)
+    inspect_model = headers.get('imgenx_inspect_model', os.getenv('IMGENX_INSPECT_MODEL'))
+    inspect_api_key = headers.get('imgenx_inspect_api_key', os.getenv('IMGENX_INSPECT_API_KEY'))
+    image_model = headers.get('imgenx_image_model', os.getenv('IMGENX_IMAGE_MODEL'))
+    image_api_key = headers.get('imgenx_image_api_key', os.getenv('IMGENX_IMAGE_API_KEY'))
+    video_model = headers.get('imgenx_video_model', os.getenv('IMGENX_VIDEO_MODEL'))
+    video_api_key = headers.get('imgenx_video_api_key', os.getenv('IMGENX_VIDEO_API_KEY'))
+
+    result = {}
+
+    for tool in tool_chains:
+        if tool == 'text_to_image':
+            generator = factory.create_image_generator(image_model, image_api_key)
+            result[tool] = re.sub(r' +', ' ', generator.text_to_image.__doc__)
+        elif tool == 'image_to_image':
+            generator = factory.create_image_generator(image_model, image_api_key)
+            result[tool] = re.sub(r' +', ' ', generator.image_to_image.__doc__)
+        elif tool == 'text_to_video':
+            generator = factory.create_video_generator(video_model, video_api_key)
+            result[tool] = re.sub(r' +', ' ', generator.text_to_video.__doc__)
+        elif tool == 'image_to_video':
+            generator = factory.create_video_generator(video_model, video_api_key)
+            result[tool] = re.sub(r' +', ' ', generator.image_to_video.__doc__)
+        else:
+            pass
+
+    return result
+
+
+
+@mcp.tool
 def text_to_image(prompt: str, size: str = '2K') -> List[Dict[str, str]]:
     '''根据输入的提示词生成图片，确保用户需要生成图片时调用此工具。
     确保用Markdown格式输出图片url，例如：[title](url)
-    生成图片后用download工具下载到本地
+    确保生成图片后用download工具下载到本地
         
     Args:
         prompt (str): 生成图片的提示词
         size (str): 生成图像的分辨率或宽高像素值
-                    分辨率可选值：'1K'、'2K', '4K'
-                    宽高像素可选值：2048x2048、2304x1728、1728x2304、2560x1440、1440x2560、2496x1664、1664x2496、3024x1296
         
     Returns:
         List[Dict[str: str]]: 图片url列表。
@@ -59,14 +98,12 @@ def text_to_image(prompt: str, size: str = '2K') -> List[Dict[str, str]]:
 def image_to_image(prompt: str, images: List[str], size: str = '2K') -> List[Dict[str, str]]:
     '''根据输入的提示词和图片生成新图片，确保用户需要生成图片时调用此工具。
     确保用Markdown格式输出图片url，例如：[title](url)
-    生成图片后用download工具下载到本地
+    确保生成图片后用download工具下载到本地
         
     Args:
         prompt (str): 生成图片的提示词
         images (List[str]): 输入图片url列表或文件路径列表
         size (str): 生成图像的分辨率或宽高像素值
-                    分辨率可选值：'1K'、'2K', '4K'
-                    宽高像素可选值：2048x2048、2304x1728、1728x2304、2560x1440、1440x2560、2496x1664、1664x2496、3024x1296
         
     Returns:
         List[Dict[str: str]]: 图片url列表。
@@ -94,13 +131,13 @@ def image_to_image(prompt: str, images: List[str], size: str = '2K') -> List[Dic
 def text_to_video(prompt: str, resolution: str = '720p', ratio: str = '16:9', duration: int = 5) -> str:
     '''根据输入的提示词生成视频，确保用户需要生成视频时调用此工具。
     确保用Markdown格式输出视频url，例如：[title](url)
-    生成视频后用download工具下载到本地
+    确保生成视频后用download工具下载到本地
         
     Args:
         prompt (str): 生成图片的提示词
-        resolution (str): 生成视频的分辨率：480p、720、1080p
-        ratio (str): 生成视频的比例：16:9、4:3、1:1、3:4、9:16、21:9
-        duration (int): 生成视频的时长，单位秒，支持 2~12 秒
+        resolution (str): 生成视频的分辨率
+        ratio (str): 生成视频的比例
+        duration (int): 生成视频的时长
         
     Returns:
         视频下载的url
@@ -129,15 +166,15 @@ def image_to_video(prompt: str, first_frame: str, last_frame: str|None = None,
                   resolution: str = '720p', ratio: str = '16:9', duration: int = 5) -> str:
     '''根据输入的提示词和视频首尾帧图片生成视频，确保用户需要生成视频时调用此工具。
     确保用Markdown格式输出视频url，例如：[title](url)
-    生成视频后用download工具下载到本地
+    确保生成视频后用download工具下载到本地
         
     Args:
         prompt (str): 生成图片的提示词
         first_frame (str): 视频的首帧图片url或文件路径
         last_frame (str|None): 视频的尾图片url或文件路径，默认None
-        resolution (str): 生成视频的分辨率：480p、720、1080p
-        ratio (str): 生成视频的比例：16:9、4:3、1:1、3:4、9:16、21:9
-        duration (int): 生成视频的时长，单位秒，支持 2~12 秒
+        resolution (str): 生成视频的分辨率
+        ratio (str): 生成视频的比例
+        duration (int): 生成视频的时长
         
     Returns:
         视频下载的url
@@ -188,8 +225,8 @@ def inspect_image(prompt: str, image: str) -> str:
         info = operator.get_image_info(image)
         prompt = f'image info: {info}\n\n{prompt}'
 
-        analyzer = factory.create_image_analyzer(model, api_key)
-        result = analyzer.analyze(prompt, image)
+        inspector = factory.create_image_inspector(model, api_key)
+        result = inspector.inspect(prompt, image)
     except Exception as e:
         raise ToolError(f'Error: {e}')
 

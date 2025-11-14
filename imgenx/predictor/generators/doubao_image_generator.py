@@ -16,6 +16,17 @@ class DoubaoImageGenerator(BaseImageGenerator):
         )
 
     def text_to_image(self, prompt: str, size: str) -> List[Dict[str, str]]:
+        '''根据提示词生成图片。
+
+        Args:
+            prompt (str): 生成图片的提示词
+            size (str): 生成图像的分辨率或宽高像素值
+                    分辨率可选值：'1K'、'2K', '4K'
+                    宽高像素可选值：2048x2048、2304x1728、1728x2304、2560x1440、1440x2560、2496x1664、1664x2496、3024x1296
+        
+        Returns:
+            List[Dict[str: str]]: 图片url列表。
+    '''
         response = self.client.images.generate( 
             model=self.model,
             prompt=prompt,
@@ -36,6 +47,18 @@ class DoubaoImageGenerator(BaseImageGenerator):
         return result
 
     def image_to_image(self, prompt: str, images: List[str], size: str) -> List[Dict[str, str]]:
+        '''根据输入的提示词和图片生成图片。
+
+        Args:
+            prompt (str): 生成图片的提示词
+            images (List[str]): 输入图片url列表或文件路径列表
+            size (str): 生成图像的分辨率或宽高像素值
+                    分辨率可选值：'1K'、'2K', '4K'
+                    宽高像素可选值：2048x2048、2304x1728、1728x2304、2560x1440、1440x2560、2496x1664、1664x2496、3024x1296
+        
+        Returns:
+            List[Dict[str: str]]: 图片url列表。
+        '''
         if len(images) == 0:
             pass_images = None
         else:
