@@ -1,15 +1,12 @@
-import sys
-sys.path.insert(0, '../../..')
-
 import base64
 from pathlib import Path
 from typing import List, Dict
 from volcenginesdkarkruntime import Ark
 
-from imgenx.predictor.base.base_image_analyzer import BaseImageAnalyzer
+from imgenx.predictor.base.base_image_inspector import BaseImageInspector
 
 
-class DoubaoImageAnalyzer(BaseImageAnalyzer):
+class DoubaoImageInspector(BaseImageInspector):
 
     def __init__(self, model: str, api_key: str):
         self.model = model
@@ -18,7 +15,7 @@ class DoubaoImageAnalyzer(BaseImageAnalyzer):
             api_key=api_key,
         )
 
-    def analyze(self, prompt: str, image: str) -> str:
+    def inspect(self, prompt: str, image: str) -> str:
         if not image.startswith('http'):
             image = self._image_to_base64(image)
 
@@ -49,17 +46,3 @@ class DoubaoImageAnalyzer(BaseImageAnalyzer):
             base64_image = f'data:image/{image_path.suffix.strip(".")};base64,{base64_image}'
 
         return base64_image
-
-
-if __name__ == '__main__':
-    import os
-    from dotenv import load_dotenv
-
-    load_dotenv()
-
-    api_key = os.getenv('IMGENX_API_KEY')
-    model = 'doubao-seed-1-6-vision-250815' 
-
-    analyzer = DoubaoImageAnalyzer(model, api_key)
-    result = analyzer.analyze('请描述这张图片', '/Volumes/DATA/个人/project/imgenx-mcp-server/logo.jpg')
-    print(result)

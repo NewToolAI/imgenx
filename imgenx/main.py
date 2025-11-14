@@ -9,7 +9,7 @@ def run():
     server_parser.add_argument('--transport', default='stdio', help='stdio|sse|streamable-http')
     server_parser.add_argument('--host', default='0.0.0.0', help='主机地址')
     server_parser.add_argument('--port', default=8000, type=int, help='端口')
-    server_parser.add_argument('--no_tools', nargs='+', default=None, help='禁用的工具名列表（用空格分隔）')
+    server_parser.add_argument('--disable_tools', nargs='+', default=None, help='禁用的工具名列表（用空格分隔）')
 
     image_parser = subparsers.add_parser('image', help='生成图片')
     image_parser.add_argument('prompt', help='生成图片的提示词')
@@ -31,8 +31,8 @@ def run():
     if args.command == 'server':
         from imgenx.server import mcp
 
-        if args.no_tools:
-            for tool in args.no_tools:
+        if args.disable_tools:
+            for tool in args.disable_tools:
                 mcp.remove_tool(tool)
 
         if args.transport == 'stdio':

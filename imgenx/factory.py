@@ -4,7 +4,7 @@ from importlib import import_module
 
 from imgenx.predictor.base.base_image_generator import BaseImageGenerator
 from imgenx.predictor.base.base_video_generator import BaseVideoGenerator
-from imgenx.predictor.base.base_image_analyzer import BaseImageAnalyzer
+from imgenx.predictor.base.base_image_inspector import BaseImageInspector
 
 
 @cache
@@ -18,11 +18,11 @@ def create_video_generator(model: str, api_key: str) -> BaseVideoGenerator:
 
 
 @cache
-def create_image_analyzer(model: str, api_key: str) -> BaseImageAnalyzer:
-    return create_predictor(model, api_key, 'image_analyzer')
+def create_image_analyzer(model: str, api_key: str) -> BaseImageInspector:
+    return create_predictor(model, api_key, 'image_inspector')
 
 
-def create_predictor(model: str, api_key: str, role: str) -> BaseImageAnalyzer:
+def create_predictor(model: str, api_key: str, role: str):
     provider, model = model.split(':')
     provider = provider.lower()
 

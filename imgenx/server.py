@@ -38,13 +38,13 @@ def text_to_image(prompt: str, size: str = '2K') -> List[Dict[str, str]]:
     '''
     headers = get_http_headers(include_all=True)
     model = headers.get('imgenx_image_model', os.getenv('IMGENX_IMAGE_MODEL'))
-    api_key = headers.get('imgenx_api_key', os.getenv('IMGENX_API_KEY'))
+    api_key = headers.get('imgenx_image_api_key', os.getenv('IMGENX_IMAGE_API_KEY'))
 
     if model is None:
         raise ToolError('IMGENX_IMAGE_MODEL is None')
 
     if api_key is None:
-        raise ToolError('IMGENX_API_KEY is None')
+        raise ToolError('IMGENX_IMAGE_API_KEY is None')
 
     try:
         generator = factory.create_image_generator(model, api_key)
@@ -73,13 +73,13 @@ def image_to_image(prompt: str, images: List[str], size: str = '2K') -> List[Dic
     '''
     headers = get_http_headers(include_all=True)
     model = headers.get('imgenx_image_model', os.getenv('IMGENX_IMAGE_MODEL'))
-    api_key = headers.get('imgenx_api_key', os.getenv('IMGENX_API_KEY'))
+    api_key = headers.get('imgenx_image_api_key', os.getenv('IMGENX_IMAGE_API_KEY'))
 
     if model is None:
         raise ToolError('IMGENX_IMAGE_MODEL is None')
 
     if api_key is None:
-        raise ToolError('IMGENX_API_KEY is None')
+        raise ToolError('IMGENX_IMAGE_API_KEY is None')
 
     try:
         generator = factory.create_image_generator(model, api_key)
@@ -107,13 +107,13 @@ def text_to_video(prompt: str, resolution: str = '720p', ratio: str = '16:9', du
     '''
     headers = get_http_headers(include_all=True)
     model = headers.get('imgenx_video_model', os.getenv('IMGENX_VIDEO_MODEL'))
-    api_key = headers.get('imgenx_api_key', os.getenv('IMGENX_API_KEY'))
+    api_key = headers.get('imgenx_video_api_key', os.getenv('IMGENX_VIDEO_API_KEY'))
 
     if model is None:
         raise ToolError('IMGENX_VIDEO_MODEL is None')
 
     if api_key is None:
-        raise ToolError('IMGENX_API_KEY is None')
+        raise ToolError('IMGENX_VIDEO_API_KEY is None')
 
     try:
         generator = factory.create_video_generator(model, api_key)
@@ -144,13 +144,13 @@ def image_to_video(prompt: str, first_frame: str, last_frame: str|None = None,
     '''
     headers = get_http_headers(include_all=True)
     model = headers.get('imgenx_video_model', os.getenv('IMGENX_VIDEO_MODEL'))
-    api_key = headers.get('imgenx_api_key', os.getenv('IMGENX_API_KEY'))
+    api_key = headers.get('imgenx_video_api_key', os.getenv('IMGENX_VIDEO_API_KEY'))
 
     if model is None:
         raise ToolError('IMGENX_VIDEO_MODEL is None')
 
     if api_key is None:
-        raise ToolError('IMGENX_API_KEY is None')
+        raise ToolError('IMGENX_VIDEO_API_KEY is None')
 
     try:
         generator = factory.create_video_generator(model, api_key)
@@ -162,10 +162,10 @@ def image_to_video(prompt: str, first_frame: str, last_frame: str|None = None,
 
 
 @mcp.tool
-def analyze_image(prompt: str, image: str) -> str:
-    '''分析图片获取精确的信息，确保用户需要分析，编辑、裁剪图片时先调用此工具。
+def inspect_image(prompt: str, image: str) -> str:
+    '''观察分析图片获取精确的信息，确保用户需要分析，编辑、裁剪图片时先调用此工具。
     确保尽量用精确数字描述图片信息。
-    输出图片裁剪区域时，确保给出精确**小数比例坐标**，坐标为左上角和右下角：x1(left), y1(upper), x2(right), y2(lower)
+    输出图片裁剪区域时，确保给出精确的**小数比例坐标**，坐标为左上角和右下角：x1(left), y1(upper), x2(right), y2(lower)
 
     Args:
         prompt (str): 分析图片的提示词
@@ -175,14 +175,14 @@ def analyze_image(prompt: str, image: str) -> str:
         str: 图片分析结果
     '''
     headers = get_http_headers(include_all=True)
-    model = headers.get('imgenx_analyzer_model', os.getenv('IMGENX_ANALYZER_MODEL'))
-    api_key = headers.get('imgenx_api_key', os.getenv('IMGENX_API_KEY'))
+    model = headers.get('imgenx_inspect_model', os.getenv('IMGENX_INSPECT_MODEL'))
+    api_key = headers.get('imgenx_inspect_api_key', os.getenv('IMGENX_INSPECT_API_KEY'))
 
     if model is None:
-        raise ToolError('IMGENX_ANALYZER_MODEL is None')
+        raise ToolError('IMGENX_INSPECT_MODEL is None')
 
     if api_key is None:
-        raise ToolError('IMGENX_API_KEY is None')
+        raise ToolError('IMGENX_INSPECT_API_KEY is None')
 
     try:
         info = operator.get_image_info(image)

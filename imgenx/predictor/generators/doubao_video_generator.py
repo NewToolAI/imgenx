@@ -1,5 +1,3 @@
-import sys
-sys.path.insert(0, '../../..')
 import base64
 import time
 from pathlib import Path
@@ -105,18 +103,3 @@ class DoubaoVideoGenerator(BaseVideoGenerator):
             base64_image = f'data:image/{image_path.suffix.strip(".")};base64,{base64_image}'
 
         return base64_image
-
-
-if __name__ == '__main__':
-    import os
-    from dotenv import load_dotenv
-
-    load_dotenv()
-
-    api_key = os.getenv('IMGENX_API_KEY')
-    model = 'doubao-seedance-1-0-pro-fast-251015' 
-
-    generator = DoubaoVideoGenerator(model, api_key)
-    image = '/Volumes/DATA/个人/project/imgenx-mcp-server/logo.jpg'
-    result = generator.image_to_video('一个人在运动', resolution='720p', ratio='16:9', first_frame=image, duration=5)
-    print(result)
