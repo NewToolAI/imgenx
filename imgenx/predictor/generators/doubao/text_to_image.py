@@ -30,7 +30,7 @@ class DoubaoTextToImage(BaseTextToImage):
             prompt=prompt,
             sequential_image_generation='auto',
             response_format='url',
-            size=size,
+            size=size.replace('*', 'x'),
             stream=False,
             watermark=False
         )

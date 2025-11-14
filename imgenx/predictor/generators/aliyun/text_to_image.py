@@ -25,7 +25,7 @@ class AliyunTextToImage(BaseTextToImage):
             model=self.model,
             api_key=self.api_key,
             messages=message,
-            size=size,
+            size=size.replace('x', '*'),
             watermark=False
         )
 
