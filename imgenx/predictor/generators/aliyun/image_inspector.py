@@ -28,8 +28,7 @@ class AliyunImageInspector(BaseImageInspector):
                 }
             ],
         )
-        print('response', response)
-        return response.output.choices[0].message.content
+        return response.output.choices[0].message.content[0]['text']
 
     def _image_to_base64(self, image_path: str) -> str:
         image_path = Path(image_path)

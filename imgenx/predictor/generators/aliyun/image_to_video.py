@@ -2,18 +2,14 @@ import base64
 from pathlib import Path
 import dashscope
 
-from imgenx.predictor.base.base_image_inspector import BaseImageInspector
+from imgenx.predictor.base.base_image_to_video import BaseImageToVideo
 
 
-class AliyunVideoGenerator(BaseImageInspector):
+class AliyunImageToVideo(BaseImageToVideo):
 
     def __init__(self, model: str, api_key: str):
         self.model = model
         self.api_key = api_key
-
-    def text_to_video(self, prompt: str, resolution: str, ratio: str, duration: int) -> str:
-        '''此工具没有实现，确保不要调用此工具'''
-        return '此工具没有实现'
 
     def image_to_video(self, prompt: str, first_frame: str, last_frame: str|None, 
                        resolution: str, ratio: str, duration: int) -> str:                       
@@ -41,17 +37,14 @@ class AliyunVideoGenerator(BaseImageInspector):
             model=self.model,
             api_key=self.api_key,
             prompt=prompt,
+            img_url=first_frame,
             first_frame_url=first_frame,
             last_frame_url=last_frame,
             resolution=resolution.upper(),
             duration=duration,
             watermark=False,
         )
-
-        if response.status_code == 200:
-            return response.output.video_url
-        else:
-            raise Exception(f'视频生成失败，状态码：{response.status_code}，错误信息：{response.message}')
+        return response.output.video_url
 
     def _image_to_base64(self, image_path: str) -> str:
         image_path = Path(image_path)

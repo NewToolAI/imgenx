@@ -9,8 +9,7 @@ from fastmcp import FastMCP
 from fastmcp.exceptions import ToolError
 from fastmcp.server.dependencies import get_http_headers
 
-from imgenx import factory
-from imgenx import operator
+from imgenx import factory, operator, utils
 
 
 load_dotenv()
@@ -33,33 +32,31 @@ def analyze_query(plan: str, tool_chains: List[str]) -> Dict[str, str]:
         工具参数更详细的说明
     '''
     headers = get_http_headers(include_all=True)
-    inspect_model = headers.get('imgenx_inspect_model', os.getenv('IMGENX_INSPECT_MODEL'))
-    inspect_api_key = headers.get('imgenx_inspect_api_key', os.getenv('IMGENX_INSPECT_API_KEY'))
-    image_model = headers.get('imgenx_image_model', os.getenv('IMGENX_IMAGE_MODEL'))
-    image_api_key = headers.get('imgenx_image_api_key', os.getenv('IMGENX_IMAGE_API_KEY'))
-    video_model = headers.get('imgenx_video_model', os.getenv('IMGENX_VIDEO_MODEL'))
-    video_api_key = headers.get('imgenx_video_api_key', os.getenv('IMGENX_VIDEO_API_KEY'))
-
     result = {}
 
     for tool in tool_chains:
+        tool = tool.strip()
+
         if tool == 'text_to_image':
-            generator = factory.create_image_generator(image_model, image_api_key)
+            model, api_key = utils.get_provider_model_api_key(tool, headers)
+            generator = factory.create_text_to_image(model, api_key)
             result[tool] = re.sub(r' +', ' ', generator.text_to_image.__doc__)
         elif tool == 'image_to_image':
-            generator = factory.create_image_generator(image_model, image_api_key)
+            model, api_key = utils.get_provider_model_api_key(tool, headers)
+            generator = factory.create_image_to_image(model, api_key)
             result[tool] = re.sub(r' +', ' ', generator.image_to_image.__doc__)
         elif tool == 'text_to_video':
-            generator = factory.create_video_generator(video_model, video_api_key)
+            model, api_key = utils.get_provider_model_api_key(tool, headers)
+            generator = factory.create_text_to_video(model, api_key)
             result[tool] = re.sub(r' +', ' ', generator.text_to_video.__doc__)
         elif tool == 'image_to_video':
-            generator = factory.create_video_generator(video_model, video_api_key)
+            model, api_key = utils.get_provider_model_api_key(tool, headers)
+            generator = factory.create_image_to_video(model, api_key)
             result[tool] = re.sub(r' +', ' ', generator.image_to_video.__doc__)
         else:
             pass
 
     return result
-
 
 
 @mcp.tool
@@ -76,17 +73,16 @@ def text_to_image(prompt: str, size: str = '2K') -> List[Dict[str, str]]:
         List[Dict[str: str]]: 图片url列表。
     '''
     headers = get_http_headers(include_all=True)
-    model = headers.get('imgenx_image_model', os.getenv('IMGENX_IMAGE_MODEL'))
-    api_key = headers.get('imgenx_image_api_key', os.getenv('IMGENX_IMAGE_API_KEY'))
+    model, api_key = utils.get_provider_model_api_key('text_to_image', headers)
 
     if model is None:
-        raise ToolError('IMGENX_IMAGE_MODEL is None')
+        raise ToolError('IMGENX_TEXT_TO_IMAGE is None')
 
     if api_key is None:
-        raise ToolError('IMGENX_IMAGE_API_KEY is None')
+        raise ToolError(f'IMGENX_{model.split(":")[0].upper()}_API_KEY is None')
 
     try:
-        generator = factory.create_image_generator(model, api_key)
+        generator = factory.create_text_to_image(model, api_key)
         url_list = generator.text_to_image(prompt, size)
     except Exception as e:
         raise ToolError(f'Error: {e}')
@@ -109,17 +105,16 @@ def image_to_image(prompt: str, images: List[str], size: str = '2K') -> List[Dic
         List[Dict[str: str]]: 图片url列表。
     '''
     headers = get_http_headers(include_all=True)
-    model = headers.get('imgenx_image_model', os.getenv('IMGENX_IMAGE_MODEL'))
-    api_key = headers.get('imgenx_image_api_key', os.getenv('IMGENX_IMAGE_API_KEY'))
+    model, api_key = utils.get_provider_model_api_key('image_to_image', headers)
 
     if model is None:
-        raise ToolError('IMGENX_IMAGE_MODEL is None')
+        raise ToolError('IMGENX_IMAGE_TO_IMAGE is None')
 
     if api_key is None:
-        raise ToolError('IMGENX_IMAGE_API_KEY is None')
+        raise ToolError(f'IMGENX_{model.split(":")[0].upper()}_API_KEY is None')
 
     try:
-        generator = factory.create_image_generator(model, api_key)
+        generator = factory.create_image_to_image(model, api_key)
         url_list = generator.image_to_image(prompt, images, size)
     except Exception as e:
         raise ToolError(f'Error: {e}')
@@ -143,17 +138,16 @@ def text_to_video(prompt: str, resolution: str = '720p', ratio: str = '16:9', du
         视频下载的url
     '''
     headers = get_http_headers(include_all=True)
-    model = headers.get('imgenx_video_model', os.getenv('IMGENX_VIDEO_MODEL'))
-    api_key = headers.get('imgenx_video_api_key', os.getenv('IMGENX_VIDEO_API_KEY'))
+    model, api_key = utils.get_provider_model_api_key('text_to_video', headers)
 
     if model is None:
-        raise ToolError('IMGENX_VIDEO_MODEL is None')
+        raise ToolError('IMGENX_TEXT_TO_VIDEO is None')
 
     if api_key is None:
-        raise ToolError('IMGENX_VIDEO_API_KEY is None')
+        raise ToolError(f'IMGENX_{model.split(":")[0].upper()}_API_KEY is None')
 
     try:
-        generator = factory.create_video_generator(model, api_key)
+        generator = factory.create_text_to_video(model, api_key)
         url = generator.text_to_video(prompt, resolution, ratio, duration)
     except Exception as e:
         raise ToolError(f'Error: {e}')
@@ -180,17 +174,16 @@ def image_to_video(prompt: str, first_frame: str, last_frame: str|None = None,
         视频下载的url
     '''
     headers = get_http_headers(include_all=True)
-    model = headers.get('imgenx_video_model', os.getenv('IMGENX_VIDEO_MODEL'))
-    api_key = headers.get('imgenx_video_api_key', os.getenv('IMGENX_VIDEO_API_KEY'))
+    model, api_key = utils.get_provider_model_api_key('image_to_video', headers)
 
     if model is None:
-        raise ToolError('IMGENX_VIDEO_MODEL is None')
+        raise ToolError('IMGENX_IMAGE_TO_VIDEO is None')
 
     if api_key is None:
-        raise ToolError('IMGENX_VIDEO_API_KEY is None')
+        raise ToolError(f'IMGENX_{model.split(":")[0].upper()}_API_KEY is None')
 
     try:
-        generator = factory.create_video_generator(model, api_key)
+        generator = factory.create_image_to_video(model, api_key)
         url = generator.image_to_video(prompt, first_frame, last_frame, resolution, ratio, duration)
     except Exception as e:
         raise ToolError(f'Error: {e}')
@@ -212,14 +205,13 @@ def inspect_image(prompt: str, image: str) -> str:
         str: 图片分析结果
     '''
     headers = get_http_headers(include_all=True)
-    model = headers.get('imgenx_inspect_model', os.getenv('IMGENX_INSPECT_MODEL'))
-    api_key = headers.get('imgenx_inspect_api_key', os.getenv('IMGENX_INSPECT_API_KEY'))
+    model, api_key = utils.get_provider_model_api_key('inspect_image', headers)
 
     if model is None:
-        raise ToolError('IMGENX_INSPECT_MODEL is None')
+        raise ToolError('IMGENX_INSPECT_IMAGE is None')
 
     if api_key is None:
-        raise ToolError('IMGENX_INSPECT_API_KEY is None')
+        raise ToolError(f'IMGENX_{model.split(":")[0].upper()}_API_KEY is None')
 
     try:
         info = operator.get_image_info(image)
